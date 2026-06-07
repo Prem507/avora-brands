@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Contact Us – Avora Brands{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <h1>Get in <span>Touch</span></h1>
+  <p>We'd love to hear from you. Fill out the form and we'll respond shortly.</p>
+</div>
+
+<main>
+  <div class="form-card">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="name">Full Name *</label>
+        <input type="text" id="name" placeholder="Jane Smith" />
+        <span class="field-error" id="name-err"></span>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" placeholder="jane@email.com" />
+        <span class="field-error" id="email-err"></span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" placeholder="+91 98765 43210" />
+    </div>
+
+    <div class="form-group">
+      <label for="message">Your Message *</label>
+      <textarea id="message" placeholder="Tell us how we can help..."></textarea>
+      <span class="field-error" id="msg-err"></span>
+    </div>
+
+    <button class="btn" id="submit-btn" onclick="submitContact()">
+      Send Message &rarr;
+    </button>
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function validate() {
+  let valid = true;
+
+  const name = document.getElementById("name");
+  const email = document.getElementById("email");
+  const message = document.getElementById("message");
+
+  // Reset
+  [name, email, message].forEach(el => el.classList.remove("error"));
+  ["name-err","email-err","msg-err"].forEach(id => document.getElementById(id).textContent = "");
+
+  if (!name.value.trim()) {
+    name.classList.add("error");
+    document.getElementById("name-err").textContent = "Name is required.";
+    valid = false;
+  }
+
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email.value.trim() || !emailRe.test(email.value)) {
+    email.classList.add("error");
+    document.getElementById("email-err").textContent = "Enter a valid email.";
+    valid = false;
+  }
+
+  if (!message.value.trim()) {
+    message.classList.add("error");
+    document.getElementById("msg-err").textContent = "Message is required.";
+    valid = false;
+  }
+
+  return valid;
+}
+
+async function submitContact() {
+  if (!validate()) return;
+
+  const btn = document.getElementById("submit-btn");
+  btn.disabled = true;
+  btn.textContent = "Sending…";
+
+  const payload = {
+    name:    document.getElementById("name").value.trim(),
+    email:   document.getElementById("email").value.trim(),
+    phone:   document.getElementById("phone").value.trim(),
+    message: document.getElementById("message").value.trim(),
+  };
+
+  try {
+    const res  = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      showToast(data.message, "success");
+      ["name","email","phone","message"].forEach(id => document.getElementById(id).value = "");
+    } else {
+      showToast(data.error || "Something went wrong.", "error");
+    }
+  } catch (e) {
+    showToast("Network error. Please try again.", "error");
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = "Send Message &rarr;";
+  }
+}
+</script>
+{% endblock %}

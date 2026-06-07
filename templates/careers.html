@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+{% block title %}Careers – Avora Brands{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <h1>Join <span>Avora</span></h1>
+  <p>We're building something bold. Come grow with us.</p>
+</div>
+
+<main>
+
+  <!-- Job Cards -->
+  <div class="jobs-grid">
+
+    <div class="job-card">
+      <div class="job-tag">Internship · Remote</div>
+      <h2>UI/UX Design Intern</h2>
+      <p class="job-desc">Help craft beautiful, user-first digital experiences. You'll work on wireframes, prototypes, and design systems using Figma.</p>
+      <ul class="job-perks">
+        <li>🎨 Figma & prototyping</li>
+        <li>📐 Design systems</li>
+        <li>🧪 User research basics</li>
+      </ul>
+      <button class="btn" onclick="openModal('UI/UX Design Intern')">Apply Now</button>
+    </div>
+
+    <div class="job-card">
+      <div class="job-tag">Internship · Remote</div>
+      <h2>Graphic Design Intern</h2>
+      <p class="job-desc">Create striking visuals for our brand — social media, marketing collateral, and campaign assets that turn heads.</p>
+      <ul class="job-perks">
+        <li>🖼️ Brand identity</li>
+        <li>📱 Social media design</li>
+        <li>🎭 Adobe / Canva</li>
+      </ul>
+      <button class="btn" onclick="openModal('Graphic Design Intern')">Apply Now</button>
+    </div>
+
+    <div class="job-card">
+      <div class="job-tag">Internship · Hybrid</div>
+      <h2>Full Stack Developer Intern</h2>
+      <p class="job-desc">Build and ship real features on our web platform. You'll touch frontend, backend, and databases — Python/Flask stack.</p>
+      <ul class="job-perks">
+        <li>🐍 Python / Flask</li>
+        <li>🌐 HTML, CSS, JS</li>
+        <li>🗃️ SQL / SQLite</li>
+      </ul>
+      <button class="btn" onclick="openModal('Full Stack Developer Intern')">Apply Now</button>
+    </div>
+
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal" onclick="closeModal(event)">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <h3 id="modal-title">Apply</h3>
+      <p id="modal-subtitle" style="color:#6b6b6b;font-size:0.9rem;margin-bottom:1.5rem;"></p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="a-name" placeholder="Your name" />
+          <span class="field-error" id="a-name-err"></span>
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="a-email" placeholder="you@email.com" />
+          <span class="field-error" id="a-email-err"></span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" id="a-phone" placeholder="+91 98765 43210" />
+      </div>
+
+      <div class="form-group">
+        <label>Why do you want this role?</label>
+        <textarea id="a-cover" placeholder="Tell us a bit about yourself and why you're interested..."></textarea>
+      </div>
+
+      <button class="btn" id="apply-btn" onclick="submitApplication()">Submit Application &rarr;</button>
+    </div>
+  </div>
+
+</main>
+{% endblock %}
+
+{% block scripts %}
+<style>
+  /* Jobs grid */
+  .jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .job-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.8rem;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .job-card:hover { box-shadow: 0 8px 40px rgba(0,0,0,0.1); transform: translateY(-3px); }
+  .job-tag {
+    display: inline-block;
+    background: var(--light-grey);
+    color: var(--grey);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    width: fit-content;
+  }
+  .job-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+  }
+  .job-desc { font-size: 0.88rem; color: var(--grey); line-height: 1.6; }
+  .job-perks { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
+  .job-perks li { font-size: 0.85rem; color: #444; }
+  .job-card .btn { margin-top: auto; align-self: flex-start; }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: #fff;
+    border-radius: 14px;
+    padding: 2.2rem;
+    width: 100%;
+    max-width: 560px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: none; } }
+  .modal-close {
+    position: absolute; top: 1rem; right: 1.2rem;
+    background: none; border: none; font-size: 1.5rem;
+    cursor: pointer; color: var(--grey);
+    line-height: 1;
+  }
+  .modal-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 0.2rem;
+  }
+</style>
+
+<script>
+let currentJob = "";
+
+function openModal(jobTitle) {
+  currentJob = jobTitle;
+  document.getElementById("modal-title").textContent = "Apply – " + jobTitle;
+  document.getElementById("modal-subtitle").textContent = "Avora Brands · Internship";
+  document.getElementById("modal").classList.add("open");
+  document.body.style.overflow = "hidden";
+  // clear fields
+  ["a-name","a-email","a-phone","a-cover"].forEach(id => document.getElementById(id).value = "");
+  ["a-name","a-email"].forEach(id => document.getElementById(id).classList.remove("error"));
+  ["a-name-err","a-email-err"].forEach(id => document.getElementById(id).textContent = "");
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById("modal")) return;
+  document.getElementById("modal").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+function validateApply() {
+  let valid = true;
+  const name = document.getElementById("a-name");
+  const email = document.getElementById("a-email");
+  [name, email].forEach(el => el.classList.remove("error"));
+  ["a-name-err","a-email-err"].forEach(id => document.getElementById(id).textContent = "");
+
+  if (!name.value.trim()) {
+    name.classList.add("error");
+    document.getElementById("a-name-err").textContent = "Name is required.";
+    valid = false;
+  }
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email.value.trim() || !emailRe.test(email.value)) {
+    email.classList.add("error");
+    document.getElementById("a-email-err").textContent = "Enter a valid email.";
+    valid = false;
+  }
+  return valid;
+}
+
+async function submitApplication() {
+  if (!validateApply()) return;
+
+  const btn = document.getElementById("apply-btn");
+  btn.disabled = true;
+  btn.textContent = "Submitting…";
+
+  const payload = {
+    job_title:    currentJob,
+    name:         document.getElementById("a-name").value.trim(),
+    email:        document.getElementById("a-email").value.trim(),
+    phone:        document.getElementById("a-phone").value.trim(),
+    cover_letter: document.getElementById("a-cover").value.trim(),
+  };
+
+  try {
+    const res  = await fetch("/api/apply", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      document.getElementById("modal").classList.remove("open");
+      document.body.style.overflow = "";
+      showToast(data.message, "success");
+    } else {
+      showToast(data.error || "Something went wrong.", "error");
+    }
+  } catch (e) {
+    showToast("Network error. Please try again.", "error");
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = "Submit Application &rarr;";
+  }
+}
+</script>
+{% endblock %}
